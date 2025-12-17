@@ -1,0 +1,39 @@
+[
+{
+    "name": "csrftoken",
+    "value": "hAzlPOijQPejSRXmCA-DSn",
+    "domain": ".instagram.com",
+    "path": "/"
+},
+{
+    "name": "datr",
+    "value": "eyYSabL6mhXGhyPvpeBDyw5b",
+    "domain": ".instagram.com",
+    "path": "/"
+},
+{
+    "name": "mid",
+    "value": "aRImewALAAGnAO55YTIws8_IU6Hr",
+    "domain": ".instagram.com",
+    "path": "/"
+},
+{
+    "name": "sessionid",
+    "domain": ".instagram.com",
+    "value": "78308874719:RIkrVZbeWJXLVd:11:AYjOIFUjl4eq8_YKKsCieaPlJTygMPYPVaEoCD2-rw",
+    "path": "/"
+},
+{
+    "name": "ds_user_id",
+    "domain": ".instagram.com",
+    "value": "78308874719",
+    "path": "/"
+},
+{
+    "name": "wd",
+    "value": "684x641",
+    "domain": ".instagram.com",
+    "path": "/"
+}
+]
+
