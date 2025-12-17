@@ -109,3 +109,7 @@ El software se basa en patrones de Instagram para scraping eficiente:
 - Implementar análisis de patrones en listas (e.g., detección de bots).
 
 [![Run on Repl.it](https://repl.it/badge/github/tonoli/instagram-followers-scraper)](https://repl.it/github/tonoli/instagram-followers-scraper)
+
+## Catura de ejecucion del porgrama
+![alt text](image.png)
+![alt text](image-1.png)

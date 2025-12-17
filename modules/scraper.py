@@ -123,7 +123,7 @@ class Scraper(object):
         password_input.send_keys(Keys.RETURN)
         time.sleep(1)
 
-    def get_users(self, group, verbose=False, max_scrolls=500, max_inactivity=25):
+    def get_users(self, group, verbose=False, max_scrolls=500, max_inactivity=25, max_users=None):
         """
         Obtiene todos los seguidores o seguidos haciendo scroll automático (versión más estable).
         """
@@ -213,7 +213,11 @@ class Scraper(object):
             if scroll_count > max_scrolls:
                 print("Límite máximo de scroll alcanzado.")
                 break
-            
+
+            if max_users and len(users) >= max_users:
+                print(f"Límite de {max_users} usuarios alcanzado.")
+                break
+
         return list(users)
 
     def _get_link(self, group):
