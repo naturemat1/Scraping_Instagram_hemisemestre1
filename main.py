@@ -59,16 +59,16 @@ def scrape(target):
         json.dump(results, f, ensure_ascii=False, indent=4)
     print(f"\nInformación del perfil guardada en {target}_profile.json")
 
-    # Save to CSV
+    # Save to Excel
     if followers:
         df_followers = pd.DataFrame({'Usuario': followers})
-        df_followers.to_csv(f'{target}_followers.csv', index=False)
-        print(f"Lista de seguidores guardada en {target}_followers.csv")
+        df_followers.to_excel(f'{target}_followers.xlsx', index=False)
+        print(f"Lista de seguidores guardada en {target}_followers.xlsx")
 
     if following:
         df_following = pd.DataFrame({'Usuario': following})
-        df_following.to_csv(f'{target}_following.csv', index=False)
-        print(f"Lista de seguidos guardada en {target}_following.csv")
+        df_following.to_excel(f'{target}_following.xlsx', index=False)
+        print(f"Lista de seguidos guardada en {target}_following.xlsx")
 
     return results
 
