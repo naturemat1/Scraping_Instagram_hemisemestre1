@@ -13,27 +13,27 @@ Este proyecto utiliza Python y [Selenium](http://www.seleniumhq.org/) para scrap
 
 ## Respuestas a Preguntas Clave
 
-### 1. Scrapear con los métodos revisados los seguidores de la cuenta @nayeli.nxx
+### 1. Scrapear con los métodos revisados los seguidos de la cuenta @nayeli.nxx
 
-Para scrapear los seguidores de @nayeli.nxx, el proyecto utiliza Selenium WebDriver para automatizar la navegación en Instagram. Los pasos incluyen:
+Para scrapear los seguidos de @nayeli.nxx, el proyecto utiliza Selenium WebDriver para automatizar la navegación en Instagram. Los pasos incluyen:
 
 - Crear un entorno virtual y activarlo.
 - Instalar dependencias con `pip install -r requirements.txt`.
 - Colocar cookies válidas de sesión en `cookies.json` (formato: `{"sessionid": "valor", "csrftoken": "valor"}`).
 - Ejecutar `python main.py`.
 - Ingresar `nayeli.nxx` como usuario objetivo.
-- El script navega al perfil, abre el diálogo de seguidores, realiza scroll automático para cargar todos los usuarios, y extrae la lista completa.
+- El script navega al perfil, abre el diálogo de seguidos, realiza scroll automático para cargar hasta 100 usuarios, y extrae la lista.
 - Maneja inactividad y límites para evitar bucles infinitos.
 
 ### 2. Recuperar: Seguidores, Seguidos, Biografía, Description
 
-El script recupera:
-- **Seguidores**: Número de seguidores del perfil objetivo (extraído de enlaces con `href='/followers'`).
-- **Seguidos**: Número de seguidos (extraído de enlaces con `href='/following'`).
-- **Biografía**: Texto de la biografía del perfil (usando XPath para elementos de biografía).
-- **Descripción**: Meta descripción de la página (atributo `content` de `<meta name='description'>`).
+El script recupera para cada usuario en la lista de seguidos (y opcionalmente seguidores):
+- **Seguidores**: Número de seguidores de cada usuario.
+- **Seguidos**: Número de seguidos de cada usuario.
+- **Biografía**: Texto de la biografía de cada usuario.
+- **Descripción**: Meta descripción del perfil de cada usuario.
 
-Estos datos se muestran en consola y se guardan en `nayeli.nxx_profile.json`. Además, se genera una lista de seguidores en `nayeli.nxx_followers.xlsx` y opcionalmente seguidos en `nayeli.nxx_following.xlsx`.
+Estos datos se muestran en consola para el perfil objetivo y se guardan en `nayeli.nxx_profile.json`. Las listas con info detallada se guardan en `nayeli.nxx_following.xlsx` (con columnas: Usuario, Seguidores, Seguidos, Biografía, Descripción) y opcionalmente `nayeli.nxx_followers.xlsx`.
 
 ### 3. Que estrategia realizaría en la creación de su software en base a los patrones encontrados
 
@@ -90,7 +90,7 @@ Basado en patrones de Instagram (XPath dinámicos, diálogos emergentes, scroll 
 
 4. Si las cookies fallan, proporciona usuario y contraseña de Instagram.
 
-5. El script mostrará info del perfil y guardará archivos en el directorio raíz.
+5. El script mostrará info del perfil, obtendrá la lista de seguidos (hasta 100), y opcionalmente seguidores, guardando archivos en el directorio raíz.
 
 ## Estrategia de Desarrollo
 
@@ -113,3 +113,4 @@ El software se basa en patrones de Instagram para scraping eficiente:
 ## Catura de ejecucion del porgrama
 ![alt text](image.png)
 ![alt text](image-1.png)
+![alt text](image-3.png)

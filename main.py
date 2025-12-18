@@ -30,18 +30,29 @@ def scrape(target):
     print(f"Biografía: {profile_info['bio']}")
     print(f"Descripción: {profile_info['description']}")
 
-    # Get followers list
-    print(f"\nObteniendo lista de seguidores de @{target}...")
-    followers = scraper.get_users("followers", verbose=True)
-    print(f"Se obtuvieron {len(followers)} seguidores.")
+    # Get following list (limited to 100)
+    print(f"\nObteniendo lista de seguidos de @{target} (máximo 100)...")
+    following = scraper.get_users("following", verbose=True, max_users=100)
+    print(f"Se obtuvieron {len(following)} seguidos.")
 
-    # Optionally get following list
-    get_following = ask_input('¿Desea obtener la lista de seguidos? (s/n): ').lower() == 's'
-    following = []
-    if get_following:
-        print(f"\nObteniendo lista de seguidos de @{target}...")
-        following = scraper.get_users("following", verbose=True)
-        print(f"Se obtuvieron {len(following)} seguidos.")
+    # Get profile info for each followed user
+    if following:
+        print(f"\nObteniendo información de perfiles de los {len(following)} seguidos...")
+        following_profiles = scraper.get_profiles_info(following)
+    else:
+        following_profiles = {}
+
+    # Optionally get followers list
+    get_followers = ask_input('¿Desea obtener la lista de seguidores? (s/n): ').lower() == 's'
+    followers = []
+    followers_profiles = {}
+    if get_followers:
+        print(f"\nObteniendo lista de seguidos de @{target} (máximo 100)...")
+        followers = scraper.get_users("followers", verbose=True, max_users=100)
+        print(f"Se obtuvieron {len(followers)} seguidores.")
+        if followers:
+            print(f"\nObteniendo información de perfiles de los {len(followers)} seguidores...")
+            followers_profiles = scraper.get_profiles_info(followers)
 
     scraper.close()
 
@@ -50,7 +61,9 @@ def scrape(target):
         'target': target,
         'profile_info': profile_info,
         'followers': followers,
-        'following': following
+        'followers_profiles': followers_profiles,
+        'following': following,
+        'following_profiles': following_profiles
     }
 
     # Save profile info to JSON
@@ -60,15 +73,27 @@ def scrape(target):
     print(f"\nInformación del perfil guardada en {target}_profile.json")
 
     # Save to Excel
-    if followers:
-        df_followers = pd.DataFrame({'Usuario': followers})
-        df_followers.to_excel(f'{target}_followers.xlsx', index=False)
-        print(f"Lista de seguidores guardada en {target}_followers.xlsx")
-
     if following:
-        df_following = pd.DataFrame({'Usuario': following})
+        df_following = pd.DataFrame({
+            'Usuario': list(following_profiles.keys()),
+            'Seguidores': [p['followers'] for p in following_profiles.values()],
+            'Seguidos': [p['following'] for p in following_profiles.values()],
+            'Biografía': [p['bio'] for p in following_profiles.values()],
+            'Descripción': [p['description'] for p in following_profiles.values()]
+        })
         df_following.to_excel(f'{target}_following.xlsx', index=False)
-        print(f"Lista de seguidos guardada en {target}_following.xlsx")
+        print(f"Lista de seguidos con info guardada en {target}_following.xlsx")
+
+    if followers:
+        df_followers = pd.DataFrame({
+            'Usuario': list(followers_profiles.keys()),
+            'Seguidores': [p['followers'] for p in followers_profiles.values()],
+            'Seguidos': [p['following'] for p in followers_profiles.values()],
+            'Biografía': [p['bio'] for p in followers_profiles.values()],
+            'Descripción': [p['description'] for p in followers_profiles.values()]
+        })
+        df_followers.to_excel(f'{target}_followers.xlsx', index=False)
+        print(f"Lista de seguidores con info guardada en {target}_followers.xlsx")
 
     return results
 

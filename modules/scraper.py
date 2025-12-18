@@ -123,7 +123,7 @@ class Scraper(object):
         password_input.send_keys(Keys.RETURN)
         time.sleep(1)
 
-    def get_users(self, group, verbose=False, max_scrolls=500, max_inactivity=25, max_users=None):
+    def get_users(self, group, verbose=False, max_scrolls=50, max_inactivity=25, max_users=None):
         """
         Obtiene todos los seguidores o seguidos haciendo scroll automático (versión más estable).
         """
@@ -476,4 +476,19 @@ class Scraper(object):
 
             time.sleep(random.uniform(1.5, 2.5))
 
+        return results
+
+    def get_profiles_info(self, usernames, delay_range=(2, 4)):
+        """
+        Get profile information for a list of usernames: followers count, following count, bio, description.
+        """
+        results = {}
+        for username in usernames:
+            try:
+                info = self.get_profile_info(username)
+                results[username] = info
+                time.sleep(random.uniform(*delay_range))
+            except Exception as e:
+                print(f"Error obteniendo info de {username}: {e}")
+                results[username] = {'followers': "N/A", 'following': "N/A", 'bio': "N/A", 'description': "N/A"}
         return results
