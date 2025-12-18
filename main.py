@@ -9,11 +9,11 @@ def scrape(target):
 
     driver = Scraper.create_driver(chromedriver_path)
 
-    print("Intentando cargar cookies desde cookies.json...")
-    session_ok = Scraper.load_simple_cookies_and_auth(driver, cookies_path)
-
     scraper = Scraper(target)
     scraper.driver = driver
+
+    print("Intentando cargar cookies desde cookies.json...")
+    session_ok = Scraper.load_simple_cookies_and_auth(driver, cookies_path)
 
     if not session_ok:
         print("Cookies no válidas, autenticando manualmente...")

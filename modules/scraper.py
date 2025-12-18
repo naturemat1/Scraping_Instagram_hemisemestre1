@@ -88,17 +88,19 @@ class Scraper(object):
     def __init__(self, target, chromedriver_path=None, cookies_path="cookies.json"):
         self.target = target
 
-        self.driver = self.create_driver(chromedriver_path)
-
-        cookies_loaded = False
-        try:
-            cookies_loaded = self.load_simple_cookies_and_auth(
-                self.driver, cookies_path
-            )
-        except Exception as e:
+        if chromedriver_path:
+            self.driver = self.create_driver(chromedriver_path)
             cookies_loaded = False
-
-        self._cookies_loaded = cookies_loaded
+            try:
+                cookies_loaded = self.load_simple_cookies_and_auth(
+                    self.driver, cookies_path
+                )
+            except Exception as e:
+                cookies_loaded = False
+            self._cookies_loaded = cookies_loaded
+        else:
+            self.driver = None
+            self._cookies_loaded = False
 
     def close(self):
         """Close the browser."""
@@ -221,57 +223,30 @@ class Scraper(object):
         return list(users)
 
     def _get_link(self, group):
-        """Return the element linking to the users list dialog (layout 2025)."""
-        print(f"\nNavigating to {self.target} profile…")
-        self.driver.get(f"https://www.instagram.com/{self.target}/")
+        """
+        Retorna el elemento <a> correcto para followers o following
+        usando la POSICIÓN fija del HTML de Instagram.
+        """
 
-        try:
-            WebDriverWait(self.driver, 15).until(
-                EC.presence_of_element_located((By.XPATH, "//header"))
-            )
+        wait = WebDriverWait(self.driver, 10)
 
-            possible_links = self.driver.find_elements(
-                By.XPATH,
-                "//header//a[contains(@href,'/followers') or contains(@href,'/following') or contains(@href,'/seguidos') or contains(@href,'/seguidores')]"
-            )
+        # Esperar a que cargue el header del perfil
+        header = wait.until(
+            EC.presence_of_element_located((By.TAG_NAME, "header"))
+        )
 
-            if not possible_links:
-                possible_links = self.driver.find_elements(
-                    By.XPATH,
-                    "//header//div[@role='link' or @role='button'] | //header//span"
-                )
+        # Obtener los links de estadísticas (posts, followers, following)
+        stats_links = header.find_elements(By.XPATH, ".//a")
 
-            if not possible_links:
-                raise Exception("No se encontraron elementos clicables para seguidores/seguidos.")
+        if len(stats_links) < 3:
+            raise Exception("No se encontraron los enlaces de followers/following")
 
-            group = group.lower()
-            target_el = None
-
-            for el in possible_links:
-                text = el.text.strip().lower()
-                if ("followers" in text and group == "followers") or \
-                ("following" in text and group == "following") or \
-                ("seguidores" in text and group == "followers") or \
-                ("seguidos" in text and group == "following"):
-                    target_el = el
-                    break
-
-            if not target_el:
-                for el in possible_links:
-                    href = el.get_attribute("href") or ""
-                    if ("/followers" in href and group == "followers") or \
-                    ("/following" in href and group == "following"):
-                        target_el = el
-                        break
-
-            if not target_el:
-                raise Exception(f"No se encontró enlace de '{group}' en el perfil actual.")
-
-            return target_el
-
-        except Exception as e:
-            print(f"Error buscando el enlace de '{group}': {e}")
-            return None
+        if group == "followers":
+            return stats_links[1]   # 👈 SIEMPRE seguidores
+        elif group == "following":
+            return stats_links[2]   # 👈 SIEMPRE seguidos
+        else:
+            raise ValueError("group debe ser 'followers' o 'following'")
 
     def _open_dialog(self, link):
         if link is None:
